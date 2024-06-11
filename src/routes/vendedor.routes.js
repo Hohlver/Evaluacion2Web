@@ -3,7 +3,17 @@ const rut = Router();
 const vendedorController = require('../db/controles/vendedorController.js');
 
 rut.get('/', (req, res) => {
-        res.send('vendedor');
+        const titulo = "vendedor"
+     
+        try {
+            vendedorController.verCompletaVendedor().then((resul) => {
+                //res.status(200).json({message: 'Mostrando Vendedores', data: resul})
+                res.render('vendedor', {titulo, resul});
+            })
+        }catch(err){
+            console.error(err);
+            res.status(500).send('Error visualizando vendedor.');
+        }
 });
 
 rut.get('/about', (req, res) => {

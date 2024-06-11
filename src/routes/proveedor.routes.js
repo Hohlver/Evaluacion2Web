@@ -4,7 +4,18 @@ const proveedorController = require('../db/controles/proveedorController.js');
 
 
 rut.get('/', (req, res) => {
-    res.send('proveedor');
+    const titulo = "proveedor"
+    
+    try{
+        proveedorController.verCompletaProveedor().then((resul) => {
+            //res.status(200).json({message: 'Mostrando proveedores', data: resul})
+            res.render('proveedor', {titulo, resul});
+        })
+
+    }catch(err){
+        console.error(err);
+        res.status(500).send('Error mostrando proveedor')
+    }
 });
 
 rut.get('/about', (req, res) => {

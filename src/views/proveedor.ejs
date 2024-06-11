@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('partials/head.ejs') %>
+
+<body>
+  <%- include('partials/navBar.ejs') %>
+  <div class="container mt-5">
+    <h1 class="mb-4"> Tabla Proveedores</h1>
+    <table class="table table-bordered table-striped">
+      <thead class="thead.dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Direccion</th>
+          <th>Telefono</th>
+          <th>Correo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% resul.forEach(item=> { %>
+          <tr>
+            <td><%= item.id %></td>
+            <td><%= item.nombre %></td>
+            <td><%= item.direccion %></td>
+            <td><%= item.telefono %></td>
+            <td><%= item.correo %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

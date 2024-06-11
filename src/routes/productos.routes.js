@@ -4,7 +4,17 @@ const productosController = require('../db/controles/productosController.js');
 
 
   rut.get('/', (req, res) => {
-    res.send('productos');
+    const titulo = "productos"
+    try {
+        productosController.verCompleta().then((resul) => {
+            //res.status(200).json({message: 'tablaProducto', data: resul}) <= version anterior de mostrar tabla
+            res.render('productos', {titulo, resul});
+
+        })
+    }catch(err){
+        console.error(err);
+        res.status(500).send('Error mostrando producto');
+    }
 });
 
 rut.get('/about', (req, res) => {

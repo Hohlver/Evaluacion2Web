@@ -4,7 +4,16 @@ const ventasController = require('../db/controles/ventasController.js');
 
 
 rut.get('/', (req, res) => {
-    res.send('ventas');
+    const titulo = "ventas"
+    try{
+        ventasController.verCompletaVenta().then((resul) => {
+            //res.status(200).json({message: 'tabla Ventas', data: resul})
+            res.render('ventas', {titulo, resul});
+        })
+    }catch(err){
+        console.error(err);
+        res.status(500).send('Error creando vendedor')
+    }
 });
 
 rut.get('/about', (req, res) => {

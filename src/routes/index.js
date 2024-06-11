@@ -10,11 +10,13 @@ rutas.use('/vendedor', vendedorRuta);
 rutas.use('/ventas', ventasRuta);
 
 rutas.get('/', (req, res) => {
-    res.send('Pagina Principal');
+    const titulo = "home"
+    res.render('home', {titulo});
 });
 
 rutas.get('/about', (req, res) => {
-    res.send('SECUNDARIO');
+    const titulo = "about"
+    res.render('about', {titulo});
 });
 
 module.exports = rutas;

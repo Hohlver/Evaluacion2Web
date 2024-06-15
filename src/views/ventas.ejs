@@ -5,7 +5,7 @@
 <body>
   <%- include('partials/navBar.ejs') %>
   <div class="container mt-5">
-    <h1 class="mb-4"> Tabla Ventas</h1>
+    <h1 class="mb-4"> Lista de Ventas</h1>
     <table class="table table-bordered table-striped">
       <thead class="thead.dark">
         <tr>
@@ -14,6 +14,7 @@
           <th>ID Vendedor</th>
           <th>Cantidad</th>
           <th>Fecha</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -24,10 +25,36 @@
             <td><%= item.id_vendedor %></td>
             <td><%= item.cantidad %></td>
             <td><%= item.fecha %></td>
+            <td>
+                  <!-- Button trigger modal -->
+              <button type="button" class="btn btn-danger btn-sm edit" data-bs-toggle="modal" data-bs-target="#modalEliminar">Eliminar</button>
+            </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
+  
+  
+    <!-- Modal -->
+
+    <div class="modal fade" id="modalEliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Eliminar Venta</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ¿Esta seguro de eliminar esta venta?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+   
   </div>
 
 

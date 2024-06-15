@@ -5,15 +5,17 @@
 <body>
   <%- include('partials/navBar.ejs') %>
   <div class="container mt-5">
-    <h1 class="mb-4"> Tabla Vendedores</h1>
+    <h1 class="mb-4"> Lista de Vendedores</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar" style="margin-top: 5px; margin-bottom: 10px;">+ Agregar Nuevo</button>      
     <table class="table table-bordered table-striped">
       <thead class="thead.dark">
         <tr>
           <th>ID</th>
           <th>Nombre</th>
           <th>Correo</th>
-          <th>Contraseña</th>
+
           <th>Telefono</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -22,12 +24,100 @@
             <td><%= item.id %></td>
             <td><%= item.nombre %></td>
             <td><%= item.correo %></td>
-            <td><%= item.contraseña %></td>
+
             <td><%= item.telefono %></td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm edit" data-bs-toggle="modal" data-bs-target="#modalEditar">Editar</button>
+              <button type="button" class="btn btn-danger btn-sm edit" data-bs-toggle="modal" data-bs-target="#modalEliminar">Eliminar</button>            </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
+
+    <div class="modal fade" id="modalAgregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Agregar Vendedor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="form-editar">
+              <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+              </div>
+              <div class="form-group">
+                <label for="correo">Correo</label>
+                <input type="email" class="form-control" id="correo" name="correo" required>
+              </div>
+              <div class="form-group">
+                <label for="contraseña">Contraseña</label>
+                <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+              </div>              
+              <div class="form-group">
+                <label for="telefono">Telefono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalEditar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Editar Vendedor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="form-editar">
+              <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+              </div>
+              <div class="form-group">
+                <label for="correo">Correo</label>
+                <input type="email" class="form-control" id="correo" name="correo" required>
+              </div>              
+              <div class="form-group">
+                <label for="telefono">Telefono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalEliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Eliminar Vendedor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ¿Esta seguro de eliminar al vendedor?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
   </div>
 
 

@@ -39,9 +39,9 @@ rut.get('/todos' , (req, res) => {
     
 });
 
-rut.delete('/eliminar:id', (req, res) => {
+rut.post('/eliminar/:id', (req, res) => {
     try {
-        const id = req.body.id; 
+        const id = req.params.id; 
         ventasController.eliminarVenta(id).then((resultado) => {
             res.status(200).json({ message: 'Venta eliminado', data: resultado });
           })
@@ -51,19 +51,6 @@ rut.delete('/eliminar:id', (req, res) => {
     }
 
   });
-
-  rut.put('/editar:id', (req, res) =>{
-    try {
-        const id = req.body; 
-        ventasController.editarVenta(id).then((resultado) => {
-            res.status(200).json({ message: 'Venta editada', data: resultado });
-          })
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error Venta')
-    }
-
-});
 
 
 

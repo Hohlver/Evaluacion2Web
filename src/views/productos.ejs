@@ -2,11 +2,19 @@
 <html lang="en">
   <%- include('partials/head.ejs') %>
 
-<body>
-  <%- include('partials/navBar.ejs') %>
+  <body>
+    <%- include('partials/navBar.ejs') %>
     <div class="container mt-5">
       <h1 class="mb-4"> Lista de Productos</h1>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar" style="margin-top: 5px; margin-bottom: 10px;">+ Agregar Nuevo</button>      
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+        data-bs-target="#modalAgregar"
+        style="margin-top: 5px; margin-bottom: 10px;">+ Agregar Nuevo</button>
+      <div class="mb-3">
+        <label for="busqueda" class="form-label">Buscar Producto</label>
+        <!-- Buscador, llamando metodo buscar Producto -->
+        <input type="text" class="form-control" id="busqueda"
+          onkeyup="buscarProducto()" placeholder="Ingrese Caracteres">
+      </div>
       <table class="table table-bordered table-striped">
         <thead class="thead.dark">
           <tr>
@@ -21,114 +29,241 @@
         </thead>
         <tbody>
           <% resul.forEach(item=> { %>
-            <tr>
-              <td><%= item.id %></td>
-              <td><%= item.nombre %></td>
-              <td><%= item.descripcion %></td>
-              <td><%= item.precio %></td>
-              <td><%= item.stock %></td>
-              <td><%= item.id_proveedor %></td>
-              <td>
-                <button type="button" class="btn btn-warning btn-sm edit" data-bs-toggle="modal" data-bs-target="#modalEditar">Editar</button>
-                <button type="button" class="btn btn-danger btn-sm edit" data-bs-toggle="modal" data-bs-target="#modalEliminar">Eliminar</button>
-              </td>
-            </tr>
+          <tr>
+            <td><%= item.id %></td>
+            <td><%= item.nombre %></td>
+            <td><%= item.descripcion %></td>
+            <td><%= item.precio %></td>
+            <td><%= item.stock %></td>
+            <td><%= item.id_proveedor %></td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm edit"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEditar<%= item.id %>">Editar</button>
+              <button type="button" class="btn btn-danger btn-sm edit"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEliminar<%= item.id %>">Eliminar</button>
+            </td>
+          </tr>
+
+          <!-- Modal agregar-->
+          <div class="modal fade" id="modalAgregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Agregar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="form-agregar" action="/crearProducto" method="post">
+                      <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <input type="text" class="form-control" id="descripcion" name="descripcion" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="precio">Precio</label>
+                        <input type="number" class="form-control" id="precio" name="precio" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="id_proveedor">ID Proveedor</label>
+                        <input type="number" class="form-control" id="id_proveedor" name="id_proveedor" required>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" form="form-agregar">Agregar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+       <!-- Metodo de agregar-->
+          <script>
+            document.getElementById('form-agregar').addEventListener('submit', function (event) {
+              event.preventDefault();
+
+
+              var nombre = document.getElementById('nombre').value;
+              var descripcion = document.getElementById('descripcion').value;
+              var precio = document.getElementById('precio').value;
+              var stock = document.getElementById('stock').value;
+              var id_proveedor = document.getElementById('id_proveedor').value;
+
+              fetch('/crearProducto', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  nombre: nombre,
+                  descripcion: descripcion,
+                  precio: precio,
+                  stock: stock,
+                  id_proveedor: id_proveedor
+                })
+              })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data);
+                  alert(data.message);
+                  document.getElementById('modalAgregar').classList.remove('show');
+                  document.getElementById('form-agregar').reset();
+                  window.location.href = '/productos';
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                });
+            });
+          </script>
+
+
+          <!-- Modal modificar -->
+          <div class="modal fade" id="modalEditar<%= item.id %>" data-bs-backdrop="static"
+            data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel<%= item.id %>">Editar
+                    Producto</h5>
+                  <button type="button" class="btn-close"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="form-editar" action="/productos/editar/<%= item.id %>">
+                    <div class="form-group">
+                      <label for="nombre">Nombre</label>
+                      <input type="text" class="form-control" id="nombre"
+                        name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="descripcion">Descripcion</label>
+                      <input type="text" class="form-control" id="descripcion"
+                        name="descripcion" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="precio">Precio</label>
+                      <input type="text" class="form-control" id="precio"
+                        name="precio" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="stock">Stock</label>
+                      <input type="text" class="form-control" id="stock"
+                        name="stock" required>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-primary" form="form-editar">Editar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de eliminar-->
+          <div class="modal fade" id="modalEliminar<%= item.id %>"
+            data-bs-backdrop="static" data-bs-keyboard="false"
+            tabindex="-1" aria-labelledby="staticBackdropLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title"
+                    id="staticBackdropLabel<%= item.id %>">Eliminar
+                    Producto</h5>
+                  <button type="button" class="btn-close"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ¿Esta seguro de eliminar este producto?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                  <form id="form-eliminar"
+                    action="/productos/eliminar/<%= item.id %>" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit"
+                      class="btn btn-primary">Eliminar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metodo de eliminar-->
+          <script>
+            document.getElementById('eliminar-form').addEventListener('submit', (event) => {
+              event.preventDefault(); // Prevent default form submission behavior
+              const id = document.getElementById('id').value;
+              fetch('/productos/eliminar/<%= item.id %>', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  alert('Producto eliminado');
+                  location.reload(); // Reload the page
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            });
+          </script>
+
           <% }) %>
         </tbody>
       </table>
-
-            <!-- Modal -->
-    <div class="modal fade" id="modalAgregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Agregar Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="form-editar">
-              <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" required>
-              </div>
-              <div class="form-group">
-                <label for="descripcion">Descripcion</label>
-                <input type="text" class="form-control" id="descripcion" name="descripcion" required>
-              </div>
-              <div class="form-group">
-                <label for="precio">Precio</label>
-                <input type="text" class="form-control" id="precio" name="precio" required>
-              </div>
-              <div class="form-group">
-                <label for="stock">Stock</label>
-                <input type="text" class="form-control" id="stock" name="stock" required>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary">Editar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-      <!-- Modal -->
-    <div class="modal fade" id="modalEditar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Editar Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="form-editar">
-              <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" required>
-              </div>
-              <div class="form-group">
-                <label for="descripcion">Descripcion</label>
-                <input type="text" class="form-control" id="descripcion" name="descripcion" required>
-              </div>
-              <div class="form-group">
-                <label for="precio">Precio</label>
-                <input type="text" class="form-control" id="precio" name="precio" required>
-              </div>
-              <div class="form-group">
-                <label for="stock">Stock</label>
-                <input type="text" class="form-control" id="stock" name="stock" required>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary">Editar</button>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="modal fade" id="modalEliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Eliminar Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            ¿Esta seguro de eliminar este producto?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary">Eliminar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+      
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Metodo buscar Producto -->
+    <script>
+      function buscarProducto() {
+        var input = document.getElementById("busqueda");
+        var filtro = input.value.toUpperCase();
+        var tabla = document.querySelector(".table-bordered");
+        var filas = tabla.getElementsByTagName("tr");
+        for (var i = 1; i < filas.length; i++) {
+          var mostrarFila = false;
 
-</body>
+          for (var j = 0; j < filas[i].cells.length - 1; j++) {
+            var celda = filas[i].cells[j];
+            if (celda) {
+              var textoCelda = celda.textContent || celda.innerText;
+              if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                mostrarFila = true;
+              }
+            }
+          }
+          if (mostrarFila) {
+            filas[i].style.display = "";
+          } else {
+            filas[i].style.display = "none";
+          }
+        }
+      }
+    </script>
+
+    <br>
+    <br>
+    <%- include('partials/footer.ejs') %>
+  </body>
 </html>

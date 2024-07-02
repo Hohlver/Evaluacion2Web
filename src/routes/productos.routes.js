@@ -17,24 +17,27 @@ const productosController = require('../db/controles/productosController.js');
     }
 });
 
-rut.get('/about', (req, res) => {
-    res.send('productos about');
-});
 
 
 
-rut.post('/crear', (req, res) => {
+rut.post('/crearProducto', async (req, res) => {
     try {
-        const data = req.body;
-    productosController.agregarProducto(data).then((resul) =>{
-        res.status(200).json({message: 'Se agrego', data: resul})
-    })
-    }catch(err){
-        console.error(err);
-        res.status(500).send('Error creando producto');
-    }
-
-});
+      const { nombre, descripcion, precio, stock, id_proveedor } = req.body;
+      const nuevoProducto = {
+        nombre,
+        descripcion,
+        precio,
+        stock,
+        id_proveedor
+      };
+  
+      const result = await productosController.agregarProducto(nuevoProducto);
+      res.status(200).json({message: 'Producto agregado'});    
+    }    
+    catch (error) {
+      console.error(error);
+      res.status(500).sendFile(path.join(__dirname, '../views', 'productos.html'));    }
+  });
 
 
 
@@ -52,22 +55,23 @@ rut.get('/todos' , (req, res) => {
 });
 
 
-rut.delete('/eliminar:id', (req, res) => {
+rut.post('/eliminar/:id', (req, res) => {
     try {
-        const id = req.body.id; 
+        const id = req.params.id; 
         productosController.eliminarProducto(id).then((resultado) => {
-            res.status(200).json({ message: 'Producto eliminado', data: resultado });
+            res.status(200).json({ message: 'Producto eliminado' });       
           })
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error Producto')
+        res.status(500).send('Error eliminando producto')
     }
 
   });
+  
 
-rut.put('/editar:id', (req, res) =>{
+rut.post('/editar/:id', (req, res) =>{
     try {
-        const id = req.body; 
+        const id = req.params.id; 
         productosController.editarProducto(id).then((resultado) => {
             res.status(200).json({ message: 'Producto editado', data: resultado });
           })

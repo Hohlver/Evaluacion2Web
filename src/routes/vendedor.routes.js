@@ -2,6 +2,7 @@ const {Router} = require('express');
 const rut = Router();
 const vendedorController = require('../db/controles/vendedorController.js');
 
+
 rut.get('/', (req, res) => {
         const titulo = "vendedor"
      
@@ -16,9 +17,6 @@ rut.get('/', (req, res) => {
         }
 });
 
-rut.get('/about', (req, res) => {
-        res.send('vendedor about');
-});
 
 rut.get('/todos' , (req, res) => {
     try {
@@ -32,23 +30,28 @@ rut.get('/todos' , (req, res) => {
 
 });
 
-rut.post('/crear', (req, res) => {
-    const data = req.body;
+
+rut.post('/crearVendedor', async (req, res) => {
     try {
-        vendedorController.agregarVendedor(data).then((resul) =>{
-            res.status(200).json({message: 'Se agrego a:', data: resul})
-        })
-    }catch(err){
-        console.error(err);
-        res.status(500).send('Error creando vendedor.');
-    }
+      const { nombre, correo, contraseña, telefono } = req.body;
+      const nuevoVendedor = {
+        nombre,
+        correo,
+        contraseña,
+        telefono
+      };
+  
+      const result = await vendedorController.agregarVendedor(nuevoVendedor);
+      res.status(200).json({message: 'vendedor agregado'});    
+    }    
+    catch (error) {
+      console.error(error);
+      res.status(500).sendFile(path.join(__dirname, '../views', 'vendedor.html'));    }
+  });
 
-});
-
-
-rut.put('/editar:id', (req, res) =>{
+rut.put('/editar/:id', (req, res) =>{
     try {
-        const id = req.body; 
+        const id = req.params.id; 
         vendedorController.editarVendedor(id).then((resultado) => {
             res.status(200).json({ message: 'Vendedor editado', data: resultado });
           })
@@ -60,9 +63,9 @@ rut.put('/editar:id', (req, res) =>{
 });
 
 
-rut.delete('/eliminar:id', (req, res) => {
+rut.delete('/eliminar/:id', (req, res) => {
     try {
-        const id = req.body.id; 
+        const id = req.params.id; 
         vendedorController.eliminarVendedor(id).then((resultado) => {
             res.status(200).json({ message: 'Vendedor eliminado', data: resultado });
           })
@@ -72,5 +75,18 @@ rut.delete('/eliminar:id', (req, res) => {
     }
 
   });
+
+  rut.post('/login', (req, res) => {
+    const {correo, contraseña} = req.body;
+    try {
+        vendedorController.logVendedor(correo, contraseña, res).then((resultado) =>{
+            res.status(200).json({message: 'Login exitoso', data: resultado});
+        })
+    } catch(err) {
+        console.error(err);
+        res.status(500).send('Error en login.');
+    }
+});
+
 
 module.exports = rut;

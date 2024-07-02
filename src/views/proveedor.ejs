@@ -6,7 +6,12 @@
   <%- include('partials/navBar.ejs') %>
   <div class="container mt-5">
     <h1 class="mb-4"> Lista de Proveedores</h1>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar" style="margin-top: 5px; margin-bottom: 10px;">+ Agregar Nuevo</button>      
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar" style="margin-top: 5px; margin-bottom: 10px;">+ Agregar Nuevo</button>
+    <div class="mb-3">
+      <label for="busqueda" class="form-label">Buscar Provedor</label>
+      <!-- Buscador, llamando metodo buscarProoverdor -->
+      <input type="text" class="form-control" id="busqueda" onkeyup="buscarProveedor()" placeholder="Ingrese Caracteres">
+  </div>      
     <table class="table table-bordered table-striped">
       <thead class="thead.dark">
         <tr>
@@ -31,10 +36,8 @@
               <button type="button" class="btn btn-danger btn-sm edit" data-bs-toggle="modal" data-bs-target="#modalEliminar">Eliminar</button>
             </td>
           </tr>
-        <% }) %>
-      </tbody>
-    </table>
 
+<!-- Modal de agregar -->
     <div class="modal fade" id="modalAgregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -43,7 +46,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form id="form-editar">
+            <form id="form-agregar" action="/crearProveedor" method="post">
               <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -64,12 +67,51 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary">Editar</button>
+            <button type="submit" class="btn btn-primary" form="form-agregar">Agregar</button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Metodo de agregar-->
+    <script>
+      document.getElementById('form-agregar').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+
+        var nombre = document.getElementById('nombre').value;
+        var direccion = document.getElementById('direccion').value;
+        var telefono = document.getElementById('telefono').value;
+        var correo = document.getElementById('correo').value;
+
+        fetch('/crearProveedor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            nombre: nombre,
+            direccion: direccion,
+            telefono: telefono,
+            correo: correo
+          })
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            alert(data.message);
+            document.getElementById('modalAgregar').classList.remove('show');
+            document.getElementById('form-agregar').reset();
+            window.location.href = '/proveedor';
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      });
+    </script>
+
+
+    <!-- Modal de modificar -->
     <div class="modal fade" id="modalEditar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -104,28 +146,101 @@
         </div>
       </div>
     </div>
-
-    <div class="modal fade" id="modalEliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <!-- Modal de eliminar -->
+    <div class="modal fade" id="modalEliminar<%= item.id %>"
+      data-bs-backdrop="static" data-bs-keyboard="false"
+      tabindex="-1" aria-labelledby="staticBackdropLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Eliminar Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title"
+              id="staticBackdropLabel<%= item.id %>">Eliminar
+              Provedor</h5>
+            <button type="button" class="btn-close"
+              data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            ¿Esta seguro de eliminar este producto?
+            ¿Esta seguro de eliminar este provedor?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary">Eliminar</button>
+            <button type="button" class="btn btn-secondary"
+              data-bs-dismiss="modal">Cancelar</button>
+            <form id="form-eliminar"
+              action="/proveedor/eliminar/<%= item.id %>" method="post">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit"
+                class="btn btn-primary">Eliminar</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
+    <!-- Metodo eliminar provedor -->
+    <script>
+      document.getElementById('eliminar-form').addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent default form submission behavior
+        const id = document.getElementById('id').value;
+        fetch('/proveedor/eliminar/<%= item.id %>', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert('Provedor eliminado');
+            location.reload(); // Reload the page
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+    </script>
+
+    <% }) %>
+  </tbody>
+</table>
     </div>
   </div>
+  <br>
+  <br>
+  <%- include('partials/footer.ejs') %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+   <!-- Metodo buscarProveedor -->
+<script>
+  function buscarProveedor() {
+      var input = document.getElementById("busqueda");
+      var filtro = input.value.toUpperCase();
+      var tabla = document.querySelector(".table-bordered");
+      var filas = tabla.getElementsByTagName("tr");
+      for (var i = 1; i < filas.length; i++) { 
+          var mostrarFila = false;
+
+          for (var j = 0; j < filas[i].cells.length - 1; j++) {
+              var celda = filas[i].cells[j];
+              if (celda) {
+                  var textoCelda = celda.textContent || celda.innerText;
+                  if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                      mostrarFila = true;
+                  }
+              }
+          }
+          if (mostrarFila) {
+              filas[i].style.display = "";
+          } else {
+              filas[i].style.display = "none";
+          }
+      }
+  }
+</script>
+
+ <!-- Metodo de eliminar-->
+ 
+
+
 
 </body>
 </html>

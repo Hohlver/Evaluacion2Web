@@ -14,6 +14,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(morgan('dev'));
 app.use(rutas);
 
+
 app.listen(config.app.port, () => {
     console.log(`Servidor corriendo en el puerto ${config.app.port}`);
 });     
